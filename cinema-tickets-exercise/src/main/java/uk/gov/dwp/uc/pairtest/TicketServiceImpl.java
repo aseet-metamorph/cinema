@@ -9,6 +9,7 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+
 public class TicketServiceImpl implements TicketService {
 
     private final TicketPaymentService paymentService;
@@ -51,15 +52,14 @@ public class TicketServiceImpl implements TicketService {
         final int totalPrice = numberOfAdults * 20 + numberOfChildren * 10;
 
         paymentService.makePayment(accountId, totalPrice);
-        reservationService.reserveSeat(accountId, numberOfAdults+numberOfChildren);
+        reservationService.reserveSeat(accountId, numberOfAdults + numberOfChildren);
     }
 
     private void validateTicketPurchaseRequest(final long numberOfAdults, final long totalNumOfTickets) {
-        if(totalNumOfTickets > 20 ){
-            throw new InvalidPurchaseException("Maximum 20 number of tickets can be booked. ");
-        }
-        else if(numberOfAdults <= 0 ){
-            throw new InvalidPurchaseException("Ticket purchased not allowed without an adult");
+        if (totalNumOfTickets > 20) {
+            throw new InvalidPurchaseException("Maximum 20 number of tickets can be booked at a time.");
+        } else if (numberOfAdults <= 0) {
+            throw new InvalidPurchaseException("Ticket purchased not allowed without an adult.");
         }
     }
 }

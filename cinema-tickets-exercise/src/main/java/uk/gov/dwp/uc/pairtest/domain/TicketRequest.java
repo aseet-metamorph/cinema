@@ -3,7 +3,7 @@ package uk.gov.dwp.uc.pairtest.domain;
 /**
  * Should be an Immutable Object
  */
-public class TicketRequest {
+public final class TicketRequest {
 
     private final int noOfTickets;
     private final Type type;

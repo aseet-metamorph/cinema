@@ -15,6 +15,7 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @ExtendWith(MockitoExtension.class)
 class TicketServiceImplTest {
     @Mock
@@ -40,6 +41,7 @@ class TicketServiceImplTest {
         purchaseRequest = new TicketPurchaseRequest(1, ticketRequests);
         assertThrows(InvalidPurchaseException.class, () -> ticketService.purchaseTickets(purchaseRequest));
     }
+
     @Test
     void bookTicketsWithoutAdult() {
         final TicketRequest[] ticketRequests = new TicketRequest[2];
