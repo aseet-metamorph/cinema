@@ -80,8 +80,7 @@ class TicketServiceImplTest {
         ticketRequests[2] = new TicketRequest(TicketRequest.Type.INFANT, 1);
         final TicketPurchaseRequest ticketPurchaseRequest = new TicketPurchaseRequest(1, ticketRequests);
         ticketService.purchaseTickets(ticketPurchaseRequest);
-        TicketRequest[] existingTicketRequest = ticketPurchaseRequest.getTicketTypeRequests();
-        existingTicketRequest[0] = new TicketRequest(TicketRequest.Type.CHILD, 3);
+        ticketPurchaseRequest.getTicketTypeRequests()[0] = new TicketRequest(TicketRequest.Type.CHILD, 3);
         Assertions.assertEquals(ticketRequests[0], ticketPurchaseRequest.getTicketTypeRequests()[0]);
         assertEquals(ticketPurchaseRequest.getAccountId(), 1);
     }
