@@ -7,7 +7,9 @@ import uk.gov.dwp.uc.pairtest.domain.TicketRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class TicketServiceImpl implements TicketService {
@@ -20,10 +22,6 @@ public class TicketServiceImpl implements TicketService {
         this.reservationService = reservationService;
     }
 
-    private static IntStream apply(final TicketRequest ticketRequest) {
-        return IntStream.of(ticketRequest.getNoOfTickets());
-    }
-
     /**
      * Should only have private methods other than the one below.
      */
@@ -31,20 +29,17 @@ public class TicketServiceImpl implements TicketService {
     public void purchaseTickets(final TicketPurchaseRequest ticketPurchaseRequest) throws InvalidPurchaseException {
         final TicketRequest[] ticketTypeRequests = ticketPurchaseRequest.getTicketTypeRequests();
         final long accountId = ticketPurchaseRequest.getAccountId();
-        final int numberOfAdults = Arrays.stream(ticketTypeRequests)
-                .filter(ticketTypeRequest -> TicketRequest.Type.ADULT.equals(ticketTypeRequest.getTicketType()))
-                .flatMapToInt(TicketServiceImpl::apply)
-                .sum();
 
-        final int numberOfChildren = Arrays.stream(ticketTypeRequests)
-                .filter(ticketTypeRequest -> TicketRequest.Type.CHILD.equals(ticketTypeRequest.getTicketType()))
-                .flatMapToInt(TicketServiceImpl::apply)
-                .sum();
+        final Map<TicketRequest.Type, Integer> ticketTypeNumberOfTicketsMap = Arrays.stream(ticketTypeRequests)
+                .collect(Collectors.groupingBy(TicketRequest::getTicketType, Collectors.summingInt(TicketRequest::getNoOfTickets)));
 
-        final int numberOfInfant = Arrays.stream(ticketTypeRequests)
-                .filter(ticketTypeRequest -> TicketRequest.Type.INFANT.equals(ticketTypeRequest.getTicketType()))
-                .flatMapToInt(TicketServiceImpl::apply)
-                .sum();
+        final int numberOfAdults = Optional.ofNullable(ticketTypeNumberOfTicketsMap.get(TicketRequest.Type.ADULT))
+                .orElse(0);
+        final int numberOfChildren = Optional.ofNullable(ticketTypeNumberOfTicketsMap.get(TicketRequest.Type.CHILD))
+                .orElse(0);
+        final int numberOfInfant = Optional.ofNullable(ticketTypeNumberOfTicketsMap.get(TicketRequest.Type.INFANT))
+                .orElse(0);
+
         final long totalNumOfTickets = numberOfAdults + numberOfChildren + numberOfInfant;
 
         validateTicketPurchaseRequest(numberOfAdults, totalNumOfTickets);
